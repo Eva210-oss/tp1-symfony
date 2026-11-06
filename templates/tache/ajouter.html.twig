@@ -1,0 +1,28 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Ajouter une tâche{% endblock %}
+
+{% block body %}
+    <div class="container mt-4">
+        <h1>Ajouter une tâche</h1>
+
+        <p>
+            Cette page permet de créer une tâche de démonstration.
+        </p>
+
+        <p>
+            Pour cet exercice, la tâche sera créée automatiquement
+            en cliquant sur le bouton ci-dessous.
+        </p>
+
+        <a href="{{ path('app_tache_ajouter') }}"
+           class="btn btn-primary">
+            Créer la tâche de démonstration
+        </a>
+
+        <a href="{{ path('app_taches') }}"
+           class="btn btn-secondary">
+            Retour à la liste
+        </a>
+    </div>
+{% endblock %}
