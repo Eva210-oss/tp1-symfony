@@ -44,7 +44,7 @@ class Article
     #[Assert\Regex(
         pattern: '/^[a-zA-ZÀ-ÿ\s\-]+$/',
         message: "Le nom de l'auteur ne peut contenir que des lettres, espaces et tirets."
-    )]
+    )]  
     private ?string $auteur = null;
 
 
