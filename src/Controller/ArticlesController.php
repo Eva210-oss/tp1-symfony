@@ -37,11 +37,66 @@ final class ArticlesController extends AbstractController
             'formulaire' => $form,
         ]);
     }
+
     #[Route('/articles/{id}', name: 'app_article_detail', requirements: ['id' => '\d+'])]
     public function detail(Article $article): Response
     {
         return $this->render('articles/detail.html.twig', [
             'article' => $article,
         ]);
+    }
+
+    // Modification d'un article
+    #[Route('/articles/{id}/modifier', name: 'app_article_modifier', requirements: ['id' => '\d+'])]
+    public function modifier(
+        Article $article,
+        Request $request,
+        EntityManagerInterface $em
+    ): Response {
+
+        // Création du formulaire avec les données existantes
+        $form = $this->createForm(ArticleType::class, $article);
+
+        // Traitement de la requête
+        $form->handleRequest($request);
+
+        if ($form->isSubmitted() && $form->isValid()) {
+
+            // Enregistrement des modifications
+            $em->flush();
+
+            $this->addFlash('success', 'Article modifié avec succès !');
+
+            return $this->redirectToRoute('app_article_detail', [
+                'id' => $article->getId()
+            ]);
+        }
+
+        return $this->render('articles/modifier.html.twig', [
+            'formulaire' => $form,
+            'article' => $article,
+        ]);
+    }
+
+    #[Route('/articles/{id}/supprimer', name: 'app_article_supprimer', requirements: ['id' => '\d+'], methods: ['POST'])]
+    public function supprimer(
+        Article $article,
+        Request $request,
+        EntityManagerInterface $em
+    ): Response {
+        // Vérification du token CSRF pour la sécurité
+        if ($this->isCsrfTokenValid(
+            'supprimer_' . $article->getId(),
+            $request->request->get('_token')
+        )) {
+            $em->remove($article);
+            $em->flush();
+
+            $this->addFlash('success', 'Article supprimé avec succès.');
+        } else {
+            $this->addFlash('danger', 'Token CSRF invalide. Suppression annulée.');
+        }
+
+        return $this->redirectToRoute('app_articles');
     }
 }
